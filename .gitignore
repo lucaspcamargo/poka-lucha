@@ -5,3 +5,4 @@ venv
 *.py[cod]
 *$py.class
 res_src/
+**/*-pygbag.py
