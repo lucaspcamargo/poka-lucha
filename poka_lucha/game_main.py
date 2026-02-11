@@ -2,8 +2,8 @@
 import sys
 import pygame
 
-from pygametest.scene_title import SceneTitle
-from pygametest.scene_victory import SceneVictory
+from poka_lucha.scene_title import SceneTitle
+from poka_lucha.scene_victory import SceneVictory
 
 from .resload import load_resources_init, load_resource
 

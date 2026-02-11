@@ -6,7 +6,7 @@
 # for the desktop version, run the game package as in:
 # $ python -m pygametest
 
-from pygametest.game_main import Game
+from poka_lucha.game_main import Game
 import asyncio, os
 
 os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "1"

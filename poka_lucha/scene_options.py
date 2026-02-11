@@ -1,6 +1,3 @@
-from pygametest.scene_gameplay import SceneGameplay
-from pygametest.scene_options import SceneOptions
-from pygametest.scene_credits import SceneCredits
 from . import scene_base
 from . import music
 from .resload import get_resource
@@ -12,7 +9,7 @@ from typing import Any
 
 BGM_VOL = 0.2
 
-class SceneTitle(scene_base.Scene):
+class SceneOptions(scene_base.Scene):
     """
     Gameplay scene:
     """
@@ -21,50 +18,45 @@ class SceneTitle(scene_base.Scene):
         self.bg_color = pygame.Color("darkslateblue")
         self.time = 0
 
+    ##img_sound = pygame.image.load("title/sound.png").convert_alpha()
+    ##img_nosound = pygame.image.load("title/nosound.png").convert_alpha()
+
 
     def enter(self, *args, **kwargs):
         self.bg_image = get_resource("title/bg.png")
         self.main_image = get_resource("title/main.png")
-        music.play("bgm/menu_prev.mp3")
-        music.set_bgm_volume(BGM_VOL)
+
         self.entities.append(
             Button(
-            1920/2-get_resource("title/play.png").get_width()/2, 500,
-            get_resource("title/play.png"),
+            1920/8-get_resource("title/button_bg.png").get_width()/8, 850,
+            get_resource("title/restart.png"),
             "",
-            callback=lambda: self.on_play()
-            )
-        )
-
-        self.entities.append(
-            Button(
-            1920/2-get_resource("title/button_bg.png").get_width()/2, 850,
-            get_resource("title/button_bg.png"),
-            "opções",
-            callback=lambda: self.on_options(),
+            callback=lambda: self.on_title(),
             font=pygame.font.SysFont("Arial", 50)
             )
         )
 
-        self.entities.append(
-            Button(
-            1920/2-get_resource("title/button_bg.png").get_width()/2, 675,
-            get_resource("title/button_bg.png"),
-            "Créditos",
-            callback=lambda: self.on_credits(), 
+        self.botaoMute = Button(
+            1920/2-get_resource("title/button_bg.png").get_width()/2+175, 600,
+            get_resource("title/sound.png"),
+            "",
+            callback=lambda: self.on_mute(), 
             font=pygame.font.SysFont("Arial", 50)
-            )
         )
 
-    def on_play(self):
-        music.stop()
-        self.manager.next_scene = SceneGameplay(self.manager)
 
-    def on_options(self):
-        self.manager.next_scene = SceneOptions(self.manager)
+        self.entities.append(
+            self.botaoMute
+        )
 
-    def on_credits(self):
-        self.manager.next_scene = SceneCredits(self.manager)
+    def on_title(self):
+        from poka_lucha.scene_title import SceneTitle
+        self.manager.next_scene = SceneTitle(self.manager)
+
+    def on_mute(self):
+        ##self.botaoMute.image.load("nosound.png") 
+        pass
+        
 
     def exit(self):
         pass
@@ -82,8 +74,7 @@ class SceneTitle(scene_base.Scene):
                 # stop/fade title music
                 music.fadeout(200)
 
-                self.manager.next_scene = SceneGameplay(self.manager)
-
+               
     def update(self, dt: float):
         super().update(dt)
         self.time += dt

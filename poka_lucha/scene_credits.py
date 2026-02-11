@@ -34,7 +34,7 @@ class SceneCredits(scene_base.Scene):
 
     def on_title(self):
         music.fadeout(200)
-        from pygametest.scene_title import SceneTitle
+        from poka_lucha.scene_title import SceneTitle
         self.manager.next_scene = SceneTitle(self.manager)
 
     def exit(self):

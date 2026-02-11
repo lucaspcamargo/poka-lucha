@@ -13,7 +13,7 @@ If you have access to a Python 3.11+ environment, the game can be run like this:
 
 ```
 # navigate to project directory
-$ cd pocalucha
+$ cd poka-lucha
 
 # create venv and activate it
 $ python -m venv venv
@@ -23,7 +23,7 @@ $ source venv/bin/activate
 $ pip install -r .'/requirements.txt
 
 # run game
-$ python -m pygametest
+$ python -m poka_lucha
 ```
 
 ## Credits

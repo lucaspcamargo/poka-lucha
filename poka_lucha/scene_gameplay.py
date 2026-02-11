@@ -1,5 +1,5 @@
 import math
-from pygametest.ent_bar import Bar
+from poka_lucha.ent_bar import Bar
 from . import scene_base
 from . import music
 from .resload import get_resource
