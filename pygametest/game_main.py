@@ -17,14 +17,18 @@ FULLSCREEN = (sys.argv.count("--fullscreen") + sys.argv.count("-f")> 0)
 SHOW_FPS = "--debug" in sys.argv or "--fps" in sys.argv
 
 class Game:
-    def __init__(self, width: int = WIDTH, height: int = HEIGHT):
+    def __init__(self, width: int = WIDTH, height: int = HEIGHT, is_web: bool = False):
         pygame.init()
         self.width = width
         self.height = height
-        flags = pygame.SCALED | pygame.RESIZABLE
-        if FULLSCREEN:
-            flags |= pygame.FULLSCREEN
-        self.screen = pygame.display.set_mode((self.width, self.height), flags, vsync=1)
+        if is_web:
+            self.screen = pygame.display.set_mode((self.width, self.height))
+            
+        else:
+            flags = pygame.SCALED | pygame.RESIZABLE
+            if FULLSCREEN:
+                flags |= pygame.FULLSCREEN
+            self.screen = pygame.display.set_mode((self.width, self.height), flags, vsync=1)
         pygame.display.set_caption(TITLE)
         self.clock = pygame.time.Clock()
         self.running = True
@@ -41,7 +45,8 @@ class Game:
             self.next_scene = SceneTitle(self)
 
     def run(self):
-        self.resource_load()
+        import asyncio
+        asyncio.get_event_loop().run_until_complete(self.resource_load())
 
         while self.running:
             dt = self.clock.tick() / 1000.0  # delta time in seconds
@@ -61,6 +66,7 @@ class Game:
 
     async def run_async(self):
         import asyncio
+        await self.resource_load()
         while self.running:
             dt = self.clock.tick() / 1000.0  # delta time in seconds
             await asyncio.sleep(0)
@@ -77,8 +83,10 @@ class Game:
             self.handle_events()
             self.update(dt)
             self.draw()
+        await asyncio.sleep(0)
 
-    def resource_load(self):
+    async def resource_load(self):
+        import asyncio
         load_color = pygame.Color("yellow")
         load_bg_color = pygame.Color("#222222")
         files = load_resources_init(RES_DIR)
@@ -95,6 +103,7 @@ class Game:
                 pygame.draw.rect(self.screen, load_bg_color, pygame.Rect(50, self.height // 2 - 15, self.width - 100, 30))
                 pygame.draw.rect(self.screen, load_color, pygame.Rect(50, self.height // 2 - 15, int((done / total) * (self.width - 100)), 30))
                 pygame.display.flip()
+                await asyncio.sleep(0)
 
     def handle_events(self):
         for event in pygame.event.get():

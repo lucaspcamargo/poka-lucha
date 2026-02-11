@@ -6,3 +6,5 @@ venv
 *$py.class
 res_src/
 **/*-pygbag.py
+**/*-pygbag.ogg
+build/

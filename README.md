@@ -32,7 +32,7 @@ This game was made by:
 
  + André Luander Aparecido Pilato (2D Art)
  + Arthur Polak Furman (Construct Programming)
- + Bruno Wilczek (Construct Programming)
+ + Bruno Dimas Wilczek (Construct Programming)
  + Douglas Luiz Castelani de Lima (2D Art)
  + Lucas Pires Camargo (Python Programming)
  + Luís Augusto Cavalheiro (Additional Python Programming)

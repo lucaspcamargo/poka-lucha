@@ -37,8 +37,8 @@ def _ensure_mixer():
 
 def _get_resource(identifier: str):
     ret = resload.get_resource(identifier)
-    if ret is None:
-        raise RuntimeError(f"Music resource '{identifier}' not found via resload.")
+    #if ret is None:
+    #    raise RuntimeError(f"Music resource '{identifier}' not found via resload.")
     return ret
 
 
@@ -89,6 +89,9 @@ def play(identifier: str, loops: int = -1, fade_ms: int = 0, start_pos: float = 
         _current_channel = ch
         _current_type = "sound"
         return
+
+    print("NO MUSIC?")
+    return
 
     # If we couldn't handle the resource, raise
     raise RuntimeError(f"Unsupported music resource type returned for '{identifier}': {type(resource)}")
