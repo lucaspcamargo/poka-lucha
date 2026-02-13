@@ -4,10 +4,9 @@ Game made for Global Game Jam 2026, at the Curitiba site.
 
 ![screenshot](doc/screenshot.png)
 
-This version is what what presented by the end of the Jam. Next steps are to make this playable in the browser. 
+This will be the complete version of the game. For the version rpesented at the Jam, checkout the tag `ggj26cwb`.
 
-
-## Running the game
+## Running the game on the desktop
 
 If you have access to a Python 3.11+ environment, the game can be run like this:
 
