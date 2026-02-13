@@ -4,7 +4,27 @@ Game made for Global Game Jam 2026, at the Curitiba site.
 
 ![screenshot](doc/screenshot.png)
 
-This will be the complete version of the game. For the version rpesented at the Jam, checkout the tag `ggj26cwb`.
+[Play now on the web!](https://lucaspcamargo.github.io/poka-lucha/)
+
+This will be the complete version of the game. For the version presented at the Jam, checkout the tag `ggj26cwb`.
+
+## Controls
+
+Player 1:
++ Walk Left: **A**
++ Walk Right: **D**
++ Punch: **R**
++ Kick: **T**
++ Block: **Y**
+
+Player 2:
++ Walk Left: **Left Arrow**
++ Walk Right: **Right Arrow**
++ Punch: **Numpad 1**
++ Kick: **Numpad 2**
++ Block: **Numpad 3**
+
+
 
 ## Running the game on the desktop
 
