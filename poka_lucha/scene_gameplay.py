@@ -37,7 +37,7 @@ class SceneGameplay(scene_base.Scene):
         self.p2_lives = 3
 
     def enter(self, *args, **kwargs):
-        music.play("bgm/loop.mp3")
+        music.play("bgm/loop.ogg")
         music.set_bgm_volume(BGM_VOL)
 
         self.lower_bg = Entity((-255, 0), get_resource("bgs/new3.png"), group=self.bg_group)

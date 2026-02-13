@@ -25,7 +25,7 @@ class SceneTitle(scene_base.Scene):
     def enter(self, *args, **kwargs):
         self.bg_image = get_resource("title/bg.png")
         self.main_image = get_resource("title/main.png")
-        music.play("bgm/menu_prev.mp3")
+        music.play("bgm/menu_prev.ogg")
         music.set_bgm_volume(BGM_VOL)
         self.entities.append(
             Button(

@@ -11,7 +11,7 @@ RESOURCES = {}
 
 # file type groups
 _IMAGE_EXTS = {".png", ".jpg", ".jpeg", ".bmp", ".gif", ".tga", ".webp"}
-_SOUND_EXTS = {".wav", ".ogg", ".mp3", ".flac"}
+_SOUND_EXTS = {".wav", ".ogg"}
 _FONT_EXTS = {".ttf", ".otf"}
 
 
