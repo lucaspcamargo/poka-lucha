@@ -10,6 +10,8 @@ This will be the complete version of the game. For the version presented at the 
 
 ## Controls
 
+For now, the game requires a keyboard with numpad. This most likely will change.
+
 Player 1:
 + Walk Left: **A**
 + Walk Right: **D**
