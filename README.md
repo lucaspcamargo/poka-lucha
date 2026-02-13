@@ -6,6 +6,8 @@ Game made for Global Game Jam 2026, at the Curitiba site.
 
 [Play now on the web!](https://lucaspcamargo.github.io/poka-lucha/)
 
+You can also check out the [Construct 3 version](https://rage-bruno-wilczek.itch.io/poka-lucha).
+
 This will be the complete version of the game. For the version presented at the Jam, checkout the tag `ggj26cwb`.
 
 ## Controls
