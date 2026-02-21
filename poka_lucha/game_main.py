@@ -1,5 +1,5 @@
 
-import sys
+import sys, platform
 import pygame
 
 from poka_lucha.scene_title import SceneTitle
@@ -11,7 +11,7 @@ from .scene_gameplay import SceneGameplay
 
 
 WIDTH, HEIGHT = 1920, 1080
-TITLE = "Poca Lucha"
+TITLE = "Poka Lucha"
 RES_DIR = "./res/"
 FULLSCREEN = (sys.argv.count("--fullscreen") + sys.argv.count("-f")> 0)
 SHOW_FPS = "--debug" in sys.argv or "--fps" in sys.argv
@@ -23,7 +23,6 @@ class Game:
         self.height = height
         if is_web:
             self.screen = pygame.display.set_mode((self.width, self.height))
-            
         else:
             flags = pygame.SCALED | pygame.RESIZABLE
             if FULLSCREEN:
@@ -109,7 +108,7 @@ class Game:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
-            elif event.type == pygame.KEYDOWN:
+            elif event.type == pygame.KEYDOWN and sys.platform != "emscripten":  # Don't allow ESC to quit on web
                 if event.key == pygame.K_ESCAPE:
                     self.running = False
         

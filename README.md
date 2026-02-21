@@ -12,21 +12,21 @@ This will be the complete version of the game. For the version presented at the 
 
 ## Controls
 
-For now, the game requires a keyboard with numpad. This most likely will change.
+The game is controlled using the keybaord. Here are the controls for both players:
 
 Player 1:
 + Walk Left: **A**
 + Walk Right: **D**
-+ Punch: **R**
-+ Kick: **T**
-+ Block: **Y**
++ Punch: **Q**
++ Kick: **W**
++ Block: **E**
 
 Player 2:
-+ Walk Left: **Left Arrow**
-+ Walk Right: **Right Arrow**
-+ Punch: **Numpad 1**
-+ Kick: **Numpad 2**
-+ Block: **Numpad 3**
++ Walk Left: **J**
++ Walk Right: **L**
++ Punch: **U**
++ Kick: **I**
++ Block: **O**
 
 
 

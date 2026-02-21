@@ -36,7 +36,7 @@ jobs:
     
     - name: Build HTML5 version
       run: |
-        pygbag --build .
+        pygbag --app_name "Poka Lucha" --width 1920 --height 1080 --build .
     
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
