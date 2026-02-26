@@ -44,8 +44,13 @@ class Game:
             self.next_scene = SceneTitle(self)
 
     def run(self):
+        # HACK we do this for now, but resource loading must not have its own render loop
+        # we either make it into a scene (best) or fold it into the main loop with a state machine or something
         import asyncio
-        asyncio.get_event_loop().run_until_complete(self.resource_load())
+        if sys.platform == "win32":
+            asyncio.get_event_loop().run(self.resource_load())
+        else:
+            asyncio.get_event_loop().run_until_complete(self.resource_load())
 
         while self.running:
             dt = self.clock.tick() / 1000.0  # delta time in seconds
