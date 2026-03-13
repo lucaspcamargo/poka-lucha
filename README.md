@@ -1,6 +1,6 @@
 # Poka Lucha
 
-![Build HTML5 Game](https://github.com/lucaspcamargo/poka-lucha/actions/workflows/build-html5.yml/badge.svg?branch=main)](https://github.com/lucaspcamargo/poka-lucha/actions/workflows/build-html5.yml)
+[![Build HTML5 Game](https://github.com/lucaspcamargo/poka-lucha/actions/workflows/build-html5.yml/badge.svg?branch=main)](https://github.com/lucaspcamargo/poka-lucha/actions/workflows/build-html5.yml)
 
 Game made for Global Game Jam 2026, at the Curitiba site.
 
