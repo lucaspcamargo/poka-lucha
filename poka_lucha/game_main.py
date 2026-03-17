@@ -4,6 +4,7 @@ import pygame
 
 from poka_lucha.scene_title import SceneTitle
 from poka_lucha.scene_victory import SceneVictory
+from poka_lucha.scene_resload import SceneResload
 
 from .resload import load_resources_init, load_resource
 
@@ -12,7 +13,6 @@ from .scene_gameplay import SceneGameplay
 
 WIDTH, HEIGHT = 1920, 1080
 TITLE = "Poka Lucha"
-RES_DIR = "./res/"
 FULLSCREEN = (sys.argv.count("--fullscreen") + sys.argv.count("-f")> 0)
 SHOW_FPS = "--debug" in sys.argv or "--fps" in sys.argv
 
@@ -43,15 +43,10 @@ class Game:
         else:
             self.next_scene = SceneTitle(self)
 
-    def run(self):
-        # HACK we do this for now, but resource loading must not have its own render loop
-        # we either make it into a scene (best) or fold it into the main loop with a state machine or something
-        import asyncio
-        if sys.platform == "win32":
-            asyncio.get_event_loop().run(self.resource_load())
-        else:
-            asyncio.get_event_loop().run_until_complete(self.resource_load())
+        # syke, load resources first always
+        self.next_scene = SceneResload(self.next_scene, self)
 
+    def run(self):
         while self.running:
             dt = self.clock.tick() / 1000.0  # delta time in seconds
             if self.next_scene:
@@ -70,7 +65,6 @@ class Game:
 
     async def run_async(self):
         import asyncio
-        await self.resource_load()
         while self.running:
             dt = self.clock.tick() / 1000.0  # delta time in seconds
             await asyncio.sleep(0)
@@ -89,25 +83,7 @@ class Game:
             self.draw()
         await asyncio.sleep(0)
 
-    async def resource_load(self):
-        import asyncio
-        load_color = pygame.Color("yellow")
-        load_bg_color = pygame.Color("#222222")
-        files = load_resources_init(RES_DIR)
-        total = len(files)
-        done = 0
-        last_frame = pygame.time.get_ticks()
-        for p in files:
-            load_resource(p, RES_DIR)
-            done += 1
-            print(f"Loaded {done}/{total}: {p}")
-            if pygame.time.get_ticks() - last_frame > 50:
-                last_frame = pygame.time.get_ticks()
-                self.screen.fill(self.bg_color)
-                pygame.draw.rect(self.screen, load_bg_color, pygame.Rect(50, self.height // 2 - 15, self.width - 100, 30))
-                pygame.draw.rect(self.screen, load_color, pygame.Rect(50, self.height // 2 - 15, int((done / total) * (self.width - 100)), 30))
-                pygame.display.flip()
-                await asyncio.sleep(0)
+
 
     def handle_events(self):
         for event in pygame.event.get():
