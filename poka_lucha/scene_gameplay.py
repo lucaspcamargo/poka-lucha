@@ -80,7 +80,7 @@ class SceneGameplay(scene_base.Scene):
 
         self.heart_icon = get_resource("bgs/hud_heart.png")
         self.ent_particles = ParticleSystem()
-        self.entities.append(self.ent_particles)
+        #self.entities.append(self.ent_particles)
         
 
     def exit(self):

@@ -28,7 +28,7 @@ class SceneResload(scene_base.Scene):
         self.next_scene = next_scene
 
         self.ent_particles = ParticleSystem()
-        self.entities.append(self.ent_particles)
+        #self.entities.append(self.ent_particles)
 
     def enter(self, *args, **kwargs):
         pass
