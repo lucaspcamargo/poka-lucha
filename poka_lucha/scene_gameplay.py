@@ -5,6 +5,7 @@ from . import music
 from .resload import get_resource
 from .entity import Entity
 from .ent_guy import LittleGuy
+from .ent_particles import ParticleSystem
 
 import pygame
 import sys
@@ -78,6 +79,8 @@ class SceneGameplay(scene_base.Scene):
         self.entities.append(self.ent_p2s)
 
         self.heart_icon = get_resource("bgs/hud_heart.png")
+        self.ent_particles = ParticleSystem()
+        self.entities.append(self.ent_particles)
         
 
     def exit(self):

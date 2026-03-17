@@ -33,12 +33,18 @@ def _ensure_pygame_modules():
     except Exception:
         pass
 
-
+RES_LIST = None
 def load_resources_init(res_dir: Path | str | None = None) -> list[Path]:
     """
     Return a list of file Paths under res_dir that should be loaded.
+    This list is cached in RES_LIST global
     Does not modify RESOURCES or perform any pygame loading.
     """
+    global RES_LIST
+
+    if RES_LIST is not None:
+        return RES_LIST
+
     if res_dir is None:
         res_dir = Path(__file__).parent / "res"
     res_dir = Path(res_dir)
@@ -49,6 +55,7 @@ def load_resources_init(res_dir: Path | str | None = None) -> list[Path]:
     files = [p for p in res_dir.rglob("*") if p.is_file()]
     # deterministic order
     files.sort(key=lambda p: p.as_posix())
+    RES_LIST = files
     return files
 
 

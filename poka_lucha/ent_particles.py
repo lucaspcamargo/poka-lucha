@@ -4,8 +4,8 @@ import pygame
 from poka_lucha.entity import Entity
 
 class ParticleSystem(Entity):
-    def __init__(self, pos, emit_rate=10, particle_lifetime=1.0, particle_color=(255, 255, 255), particle_size=5):
-        super().__init__(pos)
+    def __init__(self, emit_rate=10, particle_lifetime=1.0, particle_color=(255, 255, 255), particle_size=5):
+        super().__init__((0.0, 0.0))
         self.emit_rate = emit_rate
         self.particle_lifetime = particle_lifetime
         self.particle_color = particle_color
@@ -27,7 +27,8 @@ class ParticleSystem(Entity):
                 self.particles.remove(particle)
             else:
                 # Simple movement (e.g., upward)
-                particle['pos'][1] -= 50 * dt  # Move up at a speed of 50 pixels/second
+                particle['pos'][0] += 50 * dt  # Move up at a speed of 50 pixels/second
+                particle['pos'][1] += 50 * dt  # Move up at a speed of 50 pixels/second
 
     def emit_particle(self):
         # Create a new particle with initial properties
@@ -39,6 +40,6 @@ class ParticleSystem(Entity):
         }
         self.particles.append(particle)
 
-    def render(self, surface):
+    def draw(self, surface, cam_pos = None):
         for particle in self.particles:
             pygame.draw.circle(surface, particle['color'], (int(particle['pos'][0]), int(particle['pos'][1])), int(particle['size']))
