@@ -4,6 +4,7 @@ from . import music
 from .resload import load_resources_init, load_resource
 from .ent_button import Button
 import math
+import random
 
 import pygame
 from typing import Any, Callable
@@ -27,8 +28,8 @@ class SceneResload(scene_base.Scene):
         self.last_frame = pygame.time.get_ticks()
         self.next_scene = next_scene
 
-        self.ent_particles = ParticleSystem()
-        #self.entities.append(self.ent_particles)
+        self.ent_particles = ParticleSystem(0, 3, particle_color=self.load_color, particle_size = 5, affectors = [SceneResload.particle_affector])
+        self.entities.append(self.ent_particles)
 
     def enter(self, *args, **kwargs):
         pass
@@ -42,6 +43,18 @@ class SceneResload(scene_base.Scene):
     def resume(self):
         super().resume()
 
+    @staticmethod
+    def particle_affector(particles:list, dt:float):
+        black = pygame.Color('black')
+        for p in particles:
+            p['vel'] = (
+                p["vel"][0],
+                p["vel"][1] + dt*5
+            )
+            p['size'] -= dt
+            p['color'] = p['color'].lerp(black, dt/2)
+
+
     def handle_event(self, event: pygame.event.Event):
         super().handle_event(event)
 
@@ -51,8 +64,9 @@ class SceneResload(scene_base.Scene):
             load_resource(p, RES_DIR)
             self.done += 1
             print(f"Loaded {self.done}/{self.total}: {p}")
-            if pygame.time.get_ticks() - self.last_frame > 50:
+            if pygame.time.get_ticks() - self.last_frame > 15: # try to keep 60 fps more or less
                 self.last_frame = pygame.time.get_ticks()
+                self.ent_particles.emit_particle((50+int((self.done / self.total) * (self.width - 100)), self.height // 2,), ((random.random()-0.5)*50, (random.random()-0.5)*50,))
                 break # let's update gfx at about 20 fps
         # loop ended, we must have finished it all
         if self.done == self.total:
