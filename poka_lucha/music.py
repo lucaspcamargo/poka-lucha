@@ -20,11 +20,14 @@ and pygame.mixer.Sound + Channel for preloaded Sound objects returned by resload
 """
 
 
+RES_DIR = "./res/"
+
 # internal state
 _current_id: Optional[str] = None
 _current_res: Optional[Any] = None
 _current_type: Optional[str] = None  # 'music' or 'sound'
 _current_channel: Optional[pygame.mixer.Channel] = None
+_loop_id: Optional[str] = None   # set when using play_with_intro
 _paused: bool = False
 _bgm_volume: float = 1.0
 
@@ -43,11 +46,12 @@ def _get_resource(identifier: str):
 
 
 def _clear_state():
-    global _current_id, _current_res, _current_type, _current_channel, _paused
+    global _current_id, _current_res, _current_type, _current_channel, _loop_id, _paused
     _current_id = None
     _current_res = None
     _current_type = None
     _current_channel = None
+    _loop_id = None
     _paused = False
 
 
@@ -95,6 +99,30 @@ def play(identifier: str, loops: int = -1, fade_ms: int = 0, start_pos: float = 
 
     # If we couldn't handle the resource, raise
     raise RuntimeError(f"Unsupported music resource type returned for '{identifier}': {type(resource)}")
+
+
+def play_with_intro(intro_id: str, loop_id: str, fade_ms: int = 0):
+    """
+    Play intro_id once, then loop loop_id seamlessly and infinitely.
+    Both identifiers are resload keys (e.g. "bgm/intro.ogg", "bgm/loop.ogg").
+    """
+    global _current_id, _current_type, _loop_id, _paused, _bgm_volume
+
+    _ensure_mixer()
+    stop()
+
+    intro_path = RES_DIR + intro_id
+    loop_path  = RES_DIR + loop_id
+
+    pygame.mixer.music.load(intro_path)
+    pygame.mixer.music.set_volume(_bgm_volume)
+    pygame.mixer.music.play(loops=0, fade_ms=fade_ms)
+    pygame.mixer.music.queue(loop_path, loops=-1)
+
+    _current_id   = intro_id
+    _current_type = "music"
+    _loop_id      = loop_id
+    _paused       = False
 
 
 def pause():
