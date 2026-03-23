@@ -1,4 +1,4 @@
-from poka_lucha.scene_gameplay import SceneGameplay
+from poka_lucha.scene_charselect import SceneCharSelect
 from poka_lucha.scene_options import SceneOptions
 from poka_lucha.scene_credits import SceneCredits
 from . import scene_base
@@ -58,7 +58,7 @@ class SceneTitle(scene_base.Scene):
 
     def on_play(self):
         music.stop()
-        self.manager.next_scene = SceneGameplay(self.manager)
+        self.manager.next_scene = SceneCharSelect(self.manager)
 
     def on_options(self):
         self.manager.next_scene = SceneOptions(self.manager)
@@ -82,7 +82,7 @@ class SceneTitle(scene_base.Scene):
                 # stop/fade title music
                 music.fadeout(200)
 
-                self.manager.next_scene = SceneGameplay(self.manager)
+                self.manager.next_scene = SceneCharSelect(self.manager)
 
     def update(self, dt: float):
         super().update(dt)

@@ -3,7 +3,7 @@ from typing import Callable, Dict, List, Tuple
 import pygame
 
 class InputAction(Enum):
-    """Enumeration of possible game actions."""
+    """Enumeration of possible gameplay actions (per-player)."""
     MOVE_LEFT = "move_left"
     MOVE_RIGHT = "move_right"
     PUNCH = "punch"
@@ -12,8 +12,20 @@ class InputAction(Enum):
     PAUSE = "pause"
 
 
+class MenuAction(Enum):
+    """Enumeration of menu navigation actions (player-agnostic)."""
+    UP = "up"
+    DOWN = "down"
+    LEFT = "left"
+    RIGHT = "right"
+    CONFIRM = "confirm"
+    BACK = "back"
+
+
 class InputHandler:
     """Handles input from keyboard and game controllers, routed per player."""
+
+    AXIS_DEADZONE = 0.2
 
     def __init__(self):
         # key → (player_index, action)
@@ -28,6 +40,11 @@ class InputHandler:
         self.pressed_actions: Dict[int, set] = {}
         # callbacks receive the player index that triggered the action
         self.action_callbacks: Dict[InputAction, List[Callable[[int], None]]] = {}
+
+        # menu bindings — player-agnostic
+        self.menu_key_bindings: Dict[int, MenuAction] = {}
+        self.menu_button_bindings: Dict[int, MenuAction] = {}
+        self.menu_pressed_actions: set = set()
 
         self._setup_default_bindings()
 
@@ -57,6 +74,22 @@ class InputHandler:
             7: InputAction.PAUSE,   # Start button
         }
 
+        self.menu_key_bindings = {
+            pygame.K_UP:     MenuAction.UP,
+            pygame.K_DOWN:   MenuAction.DOWN,
+            pygame.K_LEFT:   MenuAction.LEFT,
+            pygame.K_RIGHT:  MenuAction.RIGHT,
+            pygame.K_RETURN: MenuAction.CONFIRM,
+            pygame.K_SPACE:  MenuAction.CONFIRM,
+            pygame.K_ESCAPE: MenuAction.BACK,
+        }
+
+        self.menu_button_bindings = {
+            0: MenuAction.CONFIRM,  # A button
+            1: MenuAction.BACK,     # B button
+            7: MenuAction.BACK,     # Start button
+        }
+
     def assign_joystick(self, joy_id: int, player: int):
         """Manually assign a joystick id to a player index."""
         self.joystick_players[joy_id] = player
@@ -79,6 +112,8 @@ class InputHandler:
             self._handle_button_up(event.joy, event.button)
         elif event.type == pygame.JOYAXISMOTION:
             self._handle_axis_motion(event.joy, event.axis, event.value)
+        elif event.type == pygame.JOYHATMOTION:
+            self._handle_hat_motion(event.value)
         elif event.type == pygame.JOYDEVICEADDED:
             joy_id = event.device_index
             joystick = pygame.joystick.Joystick(joy_id)
@@ -95,23 +130,29 @@ class InputHandler:
         if key in self.key_bindings:
             player, action = self.key_bindings[key]
             self._trigger_action(player, action)
+        if key in self.menu_key_bindings:
+            self.menu_pressed_actions.add(self.menu_key_bindings[key])
 
     def _handle_key_up(self, key: int):
         if key in self.key_bindings:
             player, action = self.key_bindings[key]
             self._player_actions(player).discard(action)
+        if key in self.menu_key_bindings:
+            self.menu_pressed_actions.discard(self.menu_key_bindings[key])
 
     def _handle_button_down(self, joy_id: int, button: int):
         if button in self.controller_bindings and joy_id in self.joystick_players:
             player = self.joystick_players[joy_id]
             self._trigger_action(player, self.controller_bindings[button])
+        if button in self.menu_button_bindings:
+            self.menu_pressed_actions.add(self.menu_button_bindings[button])
 
     def _handle_button_up(self, joy_id: int, button: int):
         if button in self.controller_bindings and joy_id in self.joystick_players:
             player = self.joystick_players[joy_id]
             self._player_actions(player).discard(self.controller_bindings[button])
-
-    AXIS_DEADZONE = 0.2
+        if button in self.menu_button_bindings:
+            self.menu_pressed_actions.discard(self.menu_button_bindings[button])
 
     def _handle_axis_motion(self, joy_id: int, axis: int, value: float):
         """Handle analog stick motion. Axis 0 = left stick X → MOVE_LEFT/MOVE_RIGHT."""
@@ -129,6 +170,26 @@ class InputHandler:
             actions.discard(InputAction.MOVE_LEFT)
             actions.discard(InputAction.MOVE_RIGHT)
 
+    def _handle_hat_motion(self, value: Tuple[int, int]):
+        """Handle D-pad (hat) motion → menu actions."""
+        x, y = value
+        if x == -1:
+            self.menu_pressed_actions.add(MenuAction.LEFT)
+        else:
+            self.menu_pressed_actions.discard(MenuAction.LEFT)
+        if x == 1:
+            self.menu_pressed_actions.add(MenuAction.RIGHT)
+        else:
+            self.menu_pressed_actions.discard(MenuAction.RIGHT)
+        if y == 1:
+            self.menu_pressed_actions.add(MenuAction.UP)
+        else:
+            self.menu_pressed_actions.discard(MenuAction.UP)
+        if y == -1:
+            self.menu_pressed_actions.add(MenuAction.DOWN)
+        else:
+            self.menu_pressed_actions.discard(MenuAction.DOWN)
+
     def _trigger_action(self, player: int, action: InputAction):
         self._player_actions(player).add(action)
         if action in self.action_callbacks:
@@ -136,5 +197,9 @@ class InputHandler:
                 callback(player)
 
     def is_action_pressed(self, action: InputAction, player: int) -> bool:
-        """Check if an action is currently pressed for a given player."""
+        """Check if a gameplay action is currently pressed for a given player."""
         return action in self.pressed_actions.get(player, set())
+
+    def is_menu_action_pressed(self, action: MenuAction) -> bool:
+        """Check if a menu action is currently pressed (any player)."""
+        return action in self.menu_pressed_actions

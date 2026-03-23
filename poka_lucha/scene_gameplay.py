@@ -21,8 +21,10 @@ class SceneGameplay(scene_base.Scene):
     """
     Gameplay scene:
     """
-    def __init__(self, manager: Any = None):
+    def __init__(self, manager: Any = None, p1_char: int = 0, p2_char: int = 1):
         super().__init__("gameplay", manager)
+        self.p1_char = p1_char
+        self.p2_char = p2_char
 
         self.bg_color = pygame.Color("#222222")
 
@@ -62,8 +64,8 @@ class SceneGameplay(scene_base.Scene):
         self.entities.append(self.main_bg)
 
         ih = self.manager.input_handler
-        self.ent_p1 = LittleGuy(0, False, (400, 1000-LittleGuy.DIM_Y,), input_handler=ih)
-        self.ent_p2 = LittleGuy(1, True, (1920-400-LittleGuy.DIM_X, 1000-LittleGuy.DIM_Y,), input_handler=ih)
+        self.ent_p1 = LittleGuy(self.p1_char, False, (400, 1000-LittleGuy.DIM_Y,), input_handler=ih)
+        self.ent_p2 = LittleGuy(self.p2_char, True, (1920-400-LittleGuy.DIM_X, 1000-LittleGuy.DIM_Y,), input_handler=ih)
         self.entities.append(self.ent_p1)
         self.entities.append(self.ent_p2)
 
