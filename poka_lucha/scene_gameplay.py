@@ -61,8 +61,9 @@ class SceneGameplay(scene_base.Scene):
         self.main_bg.parallax = 0.8
         self.entities.append(self.main_bg)
 
-        self.ent_p1 = LittleGuy(0, False, (400, 1000-LittleGuy.DIM_Y,))
-        self.ent_p2 = LittleGuy(1, True, (1920-400-LittleGuy.DIM_X, 1000-LittleGuy.DIM_Y,))
+        ih = self.manager.input_handler
+        self.ent_p1 = LittleGuy(0, False, (400, 1000-LittleGuy.DIM_Y,), input_handler=ih)
+        self.ent_p2 = LittleGuy(1, True, (1920-400-LittleGuy.DIM_X, 1000-LittleGuy.DIM_Y,), input_handler=ih)
         self.entities.append(self.ent_p1)
         self.entities.append(self.ent_p2)
 

@@ -2,6 +2,7 @@ import math
 from .entity import Entity
 from .ent_animspr import AnimatedSprite
 from .resload import get_resource
+from .input import InputHandler, InputAction
 
 import pygame
 import sys
@@ -76,20 +77,14 @@ class LittleGuy(AnimatedSprite):
     STATE_HIT = "hit"
     STATE_DEAD = "dead"
 
-    INPUT_MAP = [
-        {"left": pygame.K_a, "right": pygame.K_d, "punch": pygame.K_q, "kick": pygame.K_w, "block": pygame.K_e},  # Player 1
-        {"left": pygame.K_j, "right": pygame.K_l, "punch": pygame.K_u, "kick": pygame.K_i, "block": pygame.K_o},  # Player 2
-    ]
-
-
-    def __init__(self, char_id: int, p2: bool=False, pos=(0, 0)):
+    def __init__(self, char_id: int, p2: bool=False, pos=(0, 0), input_handler: InputHandler = None):
         self.animations = LittleGuy._make_anims(char_id)
         super().__init__(pos, self.animations, initial=self.STATE_IDLE)
         # identity
         self.char_id = int(char_id)
-        self.p2 = p2  # whether we are player 2 (for controls)
-        self.input_map = self.INPUT_MAP[1] if p2 else self.INPUT_MAP[0]
-        self.input_states = {key: False for key in self.input_map.keys()}
+        self.p2 = p2
+        self.player_idx = 1 if p2 else 0
+        self.input_handler = input_handler
 
         # restoration state
         self.start_pos = pos
@@ -167,17 +162,10 @@ class LittleGuy(AnimatedSprite):
         if new_state != self.STATE_WALK:
             self.vel.x = 0
 
-    def handle_event(self, event: pygame.event.Event):
-        super().handle_event(event)
-        if event.type == pygame.KEYDOWN:
-            if event.key in self.input_map.values():
-                action = list(self.input_map.keys())[list(self.input_map.values()).index(event.key)]
-                self.input_states[action] = True
-        elif event.type == pygame.KEYUP:
-            if event.key in self.input_map.values():
-                action = list(self.input_map.keys())[list(self.input_map.values()).index(event.key)]
-                self.input_states[action] = False
-
+    def _pressed(self, action: InputAction) -> bool:
+        if self.input_handler is None:
+            return False
+        return self.input_handler.is_action_pressed(action, self.player_idx)
 
     def receive_hit(self, damage, knockback=0):
         knockback *= CHAR_CONFIG[self.char_id]["knockback_multiplier"]
@@ -214,16 +202,18 @@ class LittleGuy(AnimatedSprite):
             self.stamina_timer -= self.stamina_period
             self.stamina = min(self.stamina + 1, 20)
 
-        wanna_walk = self.input_states["left"] or self.input_states["right"]
+        wanna_left  = self._pressed(InputAction.MOVE_LEFT)
+        wanna_right = self._pressed(InputAction.MOVE_RIGHT)
+        wanna_walk  = wanna_left or wanna_right
 
         if self.state in (self.STATE_IDLE, self.STATE_WALK):
-            if self.input_states["punch"] and self.has_stamina_for("punch"):
+            if self._pressed(InputAction.PUNCH) and self.has_stamina_for("punch"):
                 self.change_state(self.STATE_PUNCH)
                 self.stamina -= CHAR_CONFIG[self.char_id]["punch_stamina"]
-            elif self.input_states["kick"] and self.has_stamina_for("kick"):
+            elif self._pressed(InputAction.KICK) and self.has_stamina_for("kick"):
                 self.change_state(self.STATE_KICK)
                 self.stamina -= CHAR_CONFIG[self.char_id]["kick_stamina"]
-            elif self.input_states["block"] and self.has_stamina_for("block"):
+            elif self._pressed(InputAction.BLOCK) and self.has_stamina_for("block"):
                 self.change_state(self.STATE_BLOCK)
                 self.stamina -= CHAR_CONFIG[self.char_id]["block_stamina"]
             else:
@@ -232,9 +222,9 @@ class LittleGuy(AnimatedSprite):
                 elif self.state == self.STATE_WALK:
                     if not wanna_walk:
                         self.change_state(self.STATE_IDLE)
-                    elif self.input_states["left"]:
+                    elif wanna_left:
                         self.vel.x = -self.walk_speed
-                    elif self.input_states["right"]:
+                    elif wanna_right:
                         self.vel.x = self.walk_speed
         elif self.state in (self.STATE_KICK, self.STATE_PUNCH, self.STATE_BLOCK):
             if self.looped_times > 0:
@@ -251,9 +241,9 @@ class LittleGuy(AnimatedSprite):
                     else:
                         self.hitbox = None
                 else:
-                    #must be blocking
+                    # must be blocking
                     hold_frame = CHAR_CONFIG[self.char_id]["block_hold_frame"]
-                    if self.frame_index >= hold_frame and self.input_states["block"]:
+                    if self.frame_index >= hold_frame and self._pressed(InputAction.BLOCK):
                         self.frame_index = hold_frame
                         self.frame_time = 10000
                     else:

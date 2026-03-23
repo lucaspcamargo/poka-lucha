@@ -7,6 +7,7 @@ from poka_lucha.scene_victory import SceneVictory
 from poka_lucha.scene_resload import SceneResload
 
 from .resload import load_resources_init, load_resource
+from .input import InputHandler
 
 from .scene_gameplay import SceneGameplay
 
@@ -19,6 +20,7 @@ SHOW_FPS = "--debug" in sys.argv or "--fps" in sys.argv
 class Game:
     def __init__(self, width: int = WIDTH, height: int = HEIGHT, is_web: bool = False):
         pygame.init()
+        pygame.joystick.init()
         self.width = width
         self.height = height
         if is_web:
@@ -34,6 +36,8 @@ class Game:
 
         self.dbg_font = pygame.font.Font(None, 32)
         self.bg_color = pygame.Color("black")
+
+        self.input_handler = InputHandler()
 
         self.scene = None
         if("-g" in sys.argv):
@@ -92,7 +96,8 @@ class Game:
             elif event.type == pygame.KEYDOWN and sys.platform != "emscripten":  # Don't allow ESC to quit on web
                 if event.key == pygame.K_ESCAPE:
                     self.running = False
-        
+
+            self.input_handler.handle_event(event)
             self.scene.handle_event(event) if self.scene else None
 
     def update(self, dt: float):
