@@ -18,7 +18,7 @@ P2_LEFT   = pygame.K_j
 P2_RIGHT  = pygame.K_l
 P2_OK     = {pygame.K_u, pygame.K_i, pygame.K_o}
 
-PORTRAIT_SCALE = 0.5
+PORTRAIT_SCALE = 0.45
 PANEL_W = SW // 2
 
 COL_READY  = pygame.Color("#44ff88")
@@ -42,9 +42,9 @@ class SceneCharSelect(scene_base.Scene):
         self.portraits = [
             get_resource(f"chr/{i}/cover.png") for i in range(NUM_CHARS)
         ]
-        self.font_big   = pygame.font.SysFont("Arial", 72, bold=True)
-        self.font_small = pygame.font.SysFont("Arial", 40)
-        self.font_hint  = pygame.font.SysFont("Arial", 30)
+        self.font_big   = pygame.font.SysFont("Arial", 47, bold=True)
+        self.font_small = pygame.font.SysFont("Arial", 26)
+        self.font_hint  = pygame.font.SysFont("Arial", 20)
 
     def exit(self):
         pass
@@ -151,7 +151,7 @@ class SceneCharSelect(scene_base.Scene):
         else:
             hint_keys = "A/D  +  Q/W/E" if player == 1 else "J/L  +  U/I/O"
             status_surf = self.font_hint.render(hint_keys, True, COL_UNREADY)
-        surface.blit(status_surf, status_surf.get_rect(centerx=cx, top=dot_y + 50))
+        surface.blit(status_surf, status_surf.get_rect(centerx=cx, top=dot_y + 20))
 
     def render(self, surface: pygame.Surface):
         surface.fill(self.bg_color)
